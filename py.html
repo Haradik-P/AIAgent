@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Chatbot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #747579, #435572);
+      height: 100vh;
+      color: #e2e8f0;
+    }
+    .chatbot-icon {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(130deg, #3dafcf 0%, #6a82fb 100%);
+      border-radius: 50%;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+  #ticketFormContainer.fullscreen-active {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+  padding: 32px !important;
+  overflow-y: auto !important;
+
+
+
+  background: #fff !important;
+  z-index: 2000 !important;
+  box-shadow: none !important;
+}
+
+    .chatbot-icon:hover {
+      transform: scale(1.08);
+      background-color: #0284c7;
+    }
+    .chatbot-icon img {
+      width: 35px;
+      height: 35px;
+      filter: brightness(0) invert(1);
+    }
+    .chat-wrapper {
+      position: fixed;
+      bottom: 100px;
+      right: 24px;
+      width: 380px;
+      height: 580px;
+      background: #ececec;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid #fbfbfb;
+      transform: scale(0);
+      transform-origin: bottom right;
+      transition: all 0.3s ease;
+      opacity: 0;
+      z-index: 999;
+    }
+    .chat-wrapper.active {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .chat-header {
+      background: linear-gradient(90deg, #3dafcf 0%, #6a82fb 100%);
+      color: #fff;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 16px rgba(26, 68, 163, 0.10);
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .chat-header h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+    }
+    .chat-box {
+      flex: 1;
+      padding: 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    .chat-box::-webkit-scrollbar-thumb {
+      background-color: #ffffff;
+      border-radius: 3px;
+    }
+    .message {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      line-height: 1.4;
+      font-size: 15px;
+      animation: fadeIn 0.3s ease-in;
+      white-space: pre-wrap;
+    }
+    .user {
+      background: linear-gradient(90deg, #66b8ff 0%, #c38cff 100%);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .bot {
+      background: #fefefe;
+      color: #050505;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .chat-input {
+      display: flex;
+      background: #fefefe;
+      padding: 10px;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-input input {
+      flex: 1;
+      background: transparent;
+      border-radius: 15px;
+      color: #060606;
+      font-size: 15px;
+      padding: 10px;
+      outline: none;
+    }
+    .chat-input button {
+      background: #0ea5e9;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+    .chat-input button:hover {
+      background: #0284c7;
+    }
+    .header-actions {
+      display: flex;
+      gap: 0px;
+      align-items: center;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 24px;
+      cursor: pointer;
+      margin-left: 10px;
+      margin-top: -8px;
+    }
+    .chat-wrapper.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      bottom: 0;
+      right: 0;
+      z-index: 2000;
+      box-shadow: none;
+    }
+    .fullscreen-btn {
+      background: none;
+      border: none;
+      color:#ffffff;
+      font-size: 10px;
+      cursor: pointer;
+      margin-left: 100px;
+      margin-right: -7px;
+    }
+    #botSelector {
+      height: 23px;  
+      font-size: 13px;
+      width: 11px; 
+      padding: 2px 12px; 
+      border-radius: 6px; 
+      min-width: 110px; 
+      background: #ffffff; 
+      color: #000000; 
+      border: none; 
+      margin-right: 12px; 
+      box-shadow: 0 1px 4px rgba(26, 68, 163, 0.07); 
+      margin-right: -90px;
+    }
+    #botSelector option {
+      color: #050505;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .chat-wrapper.fullscreen #ticketFormContainer {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+  overflow-y: auto;
+  box-shadow: none !important;
+  padding: 32px !important;
+  z-index: 2000 !important;
+  background: #fff !important;
+}
+
+
+    /* Lead form styles */
+    #leadForm {
+      position: absolute;
+      bottom: 58px;
+      right: 10px;
+      left: 10px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px #bfe2ff88;
+      z-index: 1100;
+      padding: 16px 22px;
+      width: 90%;
+      max-width: 350px;
+      display: none;
+      flex-direction: column;
+    }
+    #leadForm h2 {
+      color: #3dafcf;
+      text-align: center;
+      margin: 0 0 12px 0;
+    }
+    #leadForm label {
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 8px;
+      margin-bottom: 6px;
+      color: #333;
+    }
+    #leadForm textarea, #leadForm select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      font-size: 15px;
+      border-radius: 10px;
+      border: 1.5px solid #cbd5e1;
+      background: #f7fafd;
+      resize: vertical;
+    }
+    #leadForm textarea {
+      height: 80px;
+    }
+    #leadForm button {
+      margin-top: 16px;
+      background: linear-gradient(90deg, #3dafcf 0%, #6a82fb 100%);
+      color: white;
+      padding: 12px 0;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    #leadForm button:hover {
+      background: #2f98d1;
+    }
+    #leadForm .error-message {
+      color: #c0392b;
+      font-weight: 600;
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    /* Ticket form styling */
+    #ticketFormContainer {
+      display: none;
+      position: fixed;
+      bottom: 100px;
+      right: 24px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+      max-width: 850px;
+      z-index: 1200;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    /* Ticket form container inner styles from your form */
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px 40px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 22px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 24px;
+    }
+    .section-title {
+      font-size: 15px;
+      color: #2563eb;
+      font-weight: 500;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    #ticketFormContainer.fullscreen-active {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+  overflow-y: auto;
+  box-shadow: none !important;
+  padding: 32px !important;
+  z-index: 2000 !important;
+  background: #fff !important;
+}
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .field-group {
+      flex: 1 1 240px;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-size: 14px;
+      color: #374151;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 14px;
+      color: #111827;
+      outline: none;
+      box-sizing: border-box;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px #2563eb30;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid #e5e7eb;
+      margin: 24px 0;
+    }
+    .item-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .item-table th, .item-table td {
+      border: 1px solid #e5e7eb;
+      padding: 8px 10px;
+      font-size: 14px;
+      text-align: left;
+    }
+    .item-table th {
+      background: #f9fafb;
+      font-weight: 500;
+      color: #4b5563;
+    }
+    .add-item-btn {
+      background: none;
+      border: none;
+      color: #2563eb;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .add-item-btn:hover {
+      text-decoration: underline;
+    }
+    .item-action-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      gap: 10px;
+    }
+    .modern-btn {
+      padding: 8px 18px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .modern-btn.back {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    .modern-btn.back:hover {
+      background: #e5e7eb;
+    }
+    .modern-btn.save {
+      background: #2563eb;
+      color: #fff;
+    }
+    .modern-btn.save:hover {
+      background: #1e40af;
+    }
+    pre {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+    @media (max-width: 600px) {
+      .row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Chat Icon -->
+  <div class="chatbot-icon" id="chatIcon">
+    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chatbot" />
+  </div>
+
+  <!-- Chat Window -->
+  <div class="chat-wrapper" id="chatWrapper">
+    <div class="chat-header">
+      <h2>💬 BOT</h2>
+      <div class="header-actions">
+        <!-- Bot selector dropdown -->
+        <select id="botSelector" title="Select Bot">
+          <option value="">Select Bot</option>
+          <option value="leadExtraction">Lead Extraction Bot</option>
+          <option value="databaseBot">Database Bot</option>
+          <option value="Ticket">Ticket</option>
+        </select>
+        <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">
+          <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
+            <rect x="4" y="4" width="20" height="20" rx="4" stroke="#ffffff" stroke-width="2"/>
+            <polyline points="8,12 12,8" stroke="#ffffff" stroke-width="2" fill="none"/>
+            <polyline points="8,8 8,12 12,12" stroke="#ffffff" stroke-width="2" fill="none"/>
+            <polyline points="16,20 20,16" stroke="#ffffff" stroke-width="2" fill="none"/>
+            <polyline points="20,20 16,20 16,16" stroke="#ffffff" stroke-width="2" fill="none"/>
+          </svg>
+        </button>
+        <button class="close-btn" id="closeBtn" title="Close Chat">&times;</button>
+      </div>
+    </div>
+    <div class="chat-box" id="chatBox">
+      <div class="message bot">👋 Hi there! welcome to treewalker. Please select a bot option.</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Type your message..." />
+      <button id="sendBtn">Send</button>
+    </div>
+
+    <!-- Lead creation form -->
+    <form id="leadForm" autocomplete="off">
+      <h2>Create Lead</h2>
+      <label for="leadUserInput">User Input:</label>
+      <textarea id="leadUserInput" placeholder="Paste or type your multiline message here..."></textarea>
+      <label for="assignedId">Assign Lead To:</label>
+      <select id="assignedId"></select>
+      <button type="button" id="submitLead">Submit Lead</button>
+      <div class="error-message" id="leadError"></div>
+    </form>
+  </div>
+
+  <!-- Ticket Form Container -->
+  <div id="ticketFormContainer" aria-modal="true" role="dialog" aria-labelledby="ticketFormTitle">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+  <h2 id="ticketFormTitle" style="margin:0;">Create new ticket</h2>
+  <div>
+    <button id="ticketFullscreenBtn" title="Toggle Fullscreen" style="background:none; border:none; cursor:pointer; font-size:18px; margin-right:8px;">&#x26F6;</button>
+    <button id="ticketCloseBtn" title="Close" style="background:none; border:none; cursor:pointer; font-size:24px; color:#ef4444;">&times;</button>
+  </div>
+</div>
+
+      <form id="ticketForm">
+        <div class="section-title">Ticket Details</div>
+        <div class="row">
+          <div class="field-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required>
+          </div>
+          <div class="field-group">
+            <label for="organization">Select Organization</label>
+            <select id="organization" name="organization" required>
+              <option value="" disabled selected></option>
+              <option>Org A</option>
+              <option>Org B</option>
+              <option>Tech Solutions Inc.</option>
+              <option>Innovate Corp.</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field-group">
+            <label for="receivingDate">Receiving Date</label>
+            <input type="date" id="receivingDate" name="receivingDate" required>
+          </div>
+          <div class="field-group">
+            <label for="dueDate">Due Date</label>
+            <input type="date" id="dueDate" name="dueDate">
+          </div>
+        </div>
+        <div class="section-title">Assignment Details</div>
+        <div class="row">
+          <div class="field-group">
+            <label for="assignedTo">Assigned To</label>
+            <select id="assignedTo" name="assignedTo" required>
+              <option value="" disabled selected></option>
+              <option>Kundan</option>
+              <option>Nikhil</option>
+              <option>Nisha Verma</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority" required>
+              <option value="" disabled selected></option>
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+              <option>Urgent</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+              <option>Open</option>
+              <option>In Progress</option>
+              <option>Pending</option>
+              <option>Closed</option>
+            </select>
+          </div>
+        </div>
+        <div class="section-title">Address Information</div>
+        <div class="row">
+          <div class="field-group">
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address">
+          </div>
+          <div class="field-group">
+            <label for="city">City</label>
+            <input type="text" id="city" name="city">
+          </div>
+          <div class="field-group">
+            <label for="state">State</label>
+            <input type="text" id="state" name="state">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field-group">
+            <label for="stateGST">State GST Code</label>
+            <input type="text" id="stateGST" name="stateGST">
+          </div>
+          <div class="field-group">
+            <label for="postcode">Postcode</label>
+            <input type="text" id="postcode" name="postcode">
+          </div>
+          <div class="field-group">
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" value="India">
+          </div>
+          <div class="field-group">
+            <label for="gstno">GST No.</label>
+            <input type="text" id="gstno" name="gstno">
+          </div>
+        </div>
+        <div class="section-title">Items Information</div>
+        <table class="item-table" id="itemsTable">
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Item Number</th>
+              <th>Prev Qty</th>
+              <th>Add Qty</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="itemsTbody"></tbody>
+        </table>
+        <button type="button" class="add-item-btn" id="addItemBtn">
+          <span class="material-icons" style="font-size:16px;">add</span> Add Item
+        </button>
+        <div class="section-title">Ticket description</div>
+        <textarea id="ticketDesc" name="ticketDesc"></textarea>
+        <div class="form-actions">
+          <button type="button" class="modern-btn back" id="ticketBackBtn">Back</button>
+          <button type="submit" class="modern-btn save">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+  const chatIcon = document.getElementById("chatIcon");
+  const chatWrapper = document.getElementById("chatWrapper");
+  const closeBtn = document.getElementById("closeBtn");
+  const sendBtn = document.getElementById("sendBtn");
+  const userInput = document.getElementById("userInput");
+  const chatBox = document.getElementById("chatBox");
+  const fullscreenBtn = document.getElementById("fullscreenBtn");
+  const botSelector = document.getElementById("botSelector");
+  const leadForm = document.getElementById("leadForm");
+  const leadUserInput = document.getElementById("leadUserInput");
+  const assignedIdSelect = document.getElementById("assignedId");
+  const submitLeadBtn = document.getElementById("submitLead");
+  const leadError = document.getElementById("leadError");
+  const ticketFormContainer = document.getElementById("ticketFormContainer");
+  const ticketBackBtn = document.getElementById("ticketBackBtn");
+  const ticketForm = document.getElementById("ticketForm");
+
+  // Assignees list for lead form
+  const ASSIGNEES = [
+    { id: "7294", name: "Kundan", email: "bitise8899@gmail.com" },
+    { id: "7319", name: "Nikhil", email: "ravi.patel@example.com" },
+    { id: "7295", name: "Nisha Verma", email: "nisha.verma@example.com" }
+  ];
+  function populateAssignees() {
+    assignedIdSelect.innerHTML = "";
+    ASSIGNEES.forEach(({id, name, email}) => {
+      const option = document.createElement("option");
+      option.value = String(id);
+      option.textContent = `${name} (${email})`;
+      assignedIdSelect.appendChild(option);
+    });
+  }
+  fullscreenBtn.onclick = function() {
+    chatWrapper.classList.toggle("fullscreen");
+    if (chatWrapper.classList.contains("fullscreen")) {
+    ticketFormContainer.classList.add("fullscreen-active");
+  } else {
+    ticketFormContainer.classList.remove("fullscreen-active");
+  }
+
+  };
+  chatIcon.addEventListener("click", () => {
+    chatWrapper.classList.toggle("active");
+  });
+  closeBtn.addEventListener("click", () => {
+    chatWrapper.classList.remove("active");
+    hideLeadForm();
+    hideTicketForm();
+  });
+  sendBtn.addEventListener("click", sendMessage);
+  userInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  // Bot selection logic
+  botSelector.addEventListener("change", () => {
+    const selectedBot = botSelector.value;
+    if (selectedBot === "leadExtraction") {
+      leadForm.style.display = "flex";
+      hideTicketForm();
+      leadError.textContent = "";
+      populateAssignees();
+      
+    } else if (selectedBot === "databaseBot") {
+      hideLeadForm();
+      hideTicketForm();
+      userInput.focus();
+      appendMessage("You selected Database Bot. Ask your database questions!", "bot");
+    
+    } else if (selectedBot === "Ticket") {
+      hideLeadForm();
+      showTicketForm();
+      
+    }
+  });
+
+  function hideLeadForm() {
+    leadForm.style.display = "none";
+    leadError.textContent = "";
+  }
+  function showTicketForm() {
+    ticketFormContainer.style.display = "block";
+  }
+  function hideTicketForm() {
+    ticketFormContainer.style.display = "none";
+  }
+
+  submitLeadBtn.addEventListener("click", async () => {
+    const userText = leadUserInput.value.trim();
+    const assignedId = assignedIdSelect.value;
+    if (!userText) {
+      leadError.textContent = "Please enter user input.";
+      return;
+    }
+    if (!assignedId) {
+      leadError.textContent = "Please select an assignee.";
+      return;
+    }
+    leadError.textContent = "";
+    appendMessage(userText, "user");
+    appendMessage("...", "bot");
+    const payload = {
+      user_text: userText,
+      assigned_to_id: String(assignedId)
+    };
+    try {
+      const response = await fetch("http://127.0.0.1:8000/extract-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      removeLastBotTyping();
+      if (!response.ok) {
+        leadError.textContent = "Failed to create lead. Please try again later.";
+        return;
+      }
+      const data = await response.json();
+      
+      if (data.error && data.missing_fields) {
+        leadError.textContent = `Missing required fields: ${data.missing_fields.join(', ')}. Please provide these and submit again.`;
+        if (data.lead_data) {
+          let updatedInput = userText;
+          data.missing_fields.forEach(field => {
+            updatedInput += `\n${field}: `;
+          });
+          leadUserInput.value = updatedInput;
+        }
+        return;
+      }
+      appendMessage("✅ Lead created successfully!", "bot");
+      leadUserInput.value = "";
+      hideLeadForm();
+    } catch (error) {
+      removeLastBotTyping();
+      leadError.textContent = `Failed to create lead: ${error.message}`;
+    }
+  });
+  function removeLastBotTyping() {
+    const botMessages = chatBox.querySelectorAll(".message.bot");
+    if (botMessages.length) {
+      const last = botMessages[botMessages.length - 1];
+      if (last.textContent === "...") {
+        last.remove();
+      }
+    }
+  }
+  async function sendMessage() {
+    const msg = userInput.value.trim();
+    if (!msg) return;
+    const selectedBot = botSelector.value;
+    if (selectedBot !== "databaseBot") {
+    appendMessage("Please select a bot option.", "bot");
+    return;
+   }
+
+    appendMessage(msg, "user");
+    userInput.value = "";
+    const payload = { query: msg };
+    try {
+      const response = await fetch("http://127.0.0.1:8000/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      
+      if (!response.ok) {
+        appendMessage("⚠️ Server error. Please try again.", "bot");
+        return;
+      }
+      const data = await response.json();
+      let answer = data.data || data.output || data.agent_output?.output || String(data);
+      answer = answer.trim();
+          let finalResponse;
+    if (answer.match(/[.!?]$/) || answer.toLowerCase().includes("is ")) {
+      // if backend already forms full sentence
+      finalResponse = answer;
+    } else {
+      // make natural sentence
+      finalResponse = `${msg} is ${answer}`;
+    }
+      
+      appendMessage(finalResponse, "bot");
+    } catch (error) {
+      console.error(error);
+      appendMessage("❌ Failed to reach backend API.", "bot");
+    }
+  }
+  function appendMessage(text, sender) {
+    const message = document.createElement("div");
+    message.classList.add("message", sender);
+    message.textContent = text;
+    chatBox.appendChild(message);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+  function formatBotResponse(data) {
+    if (typeof data === "string") return data;
+    if (data.answer) return data.answer;
+    if (data.data && Array.isArray(data.data)) {
+      const rows = data.data;
+      if (rows.length === 0) return "No results found.";
+      return rows
+        .map((row, i) => {
+          const entries = Object.entries(row)
+            .map(([k, v]) => `${capitalize(k)}: ${v}`)
+            .join(", ");
+          return rows.length > 1 ? `${i + 1}. ${entries}` : entries;
+        })
+        .join("\n");
+    }
+    return data.data || data.output || data;
+  }
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  // Ticket Form logic
+  document.getElementById("addItemBtn").onclick = () => {
+    document.getElementById("itemsTbody").appendChild(createItemRow());
+  };
+  document.getElementById("itemsTbody").appendChild(createItemRow());
+
+  function createItemRow(item = {}) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" value="${item.name || ''}"></td>
+      <td><input type="text" value="${item.number || ''}"></td>
+      <td><input type="number" min="0" value="${item.prevQty || 0}"></td>
+      <td><input type="number" min="0" value="${item.addQty || 0}"></td>
+      <td><button type="button" class="item-action-btn"><span class="material-icons">delete</span></button></td>
+    `;
+    tr.querySelector('.item-action-btn').onclick = () => tr.remove();
+    return tr;
+  }
+
+  function getItems() {
+    const rows = document.querySelectorAll('#itemsTbody tr');
+    return Array.from(rows)
+      .map((row) => {
+        const tds = row.querySelectorAll('td input');
+        return {
+          'ITEM_NAME': tds[0].value,
+          'ITEM_NUMBER': tds[1].value,
+          'PREV_QTY': Number(tds[2].value) || 0,
+          'ADD_QTY': Number(tds[3].value) || 0,
+        };
+      })
+      .filter((item) => item['ITEM_NAME'] && item['ITEM_NUMBER']);
+  }
+
+  ticketForm.onsubmit = async function (e) {
+    e.preventDefault();
+    const f = this;
+    const ticketData = {
+      Title: f.title.value,
+      Organization: f.organization.value,
+      ReceivingDate: f.receivingDate.value ? new Date(f.receivingDate.value).toISOString() : null,
+      DueDate: f.dueDate.value ? new Date(f.dueDate.value).toISOString() : null,
+      AssignedTo: f.assignedTo.value,
+      Priority: f.priority.value,
+      Status: f.status.value,
+      Address: f.address.value,
+      City: f.city.value,
+      State: f.state.value,
+      StateGST: f.stateGST.value,
+      Postcode: f.postcode.value,
+      Country: f.country.value,
+      GSTNo: f.gstno.value,
+      Items: getItems(),
+      Description: f.ticketDesc.value,
+    };
+
+    try {
+      const response = await fetch('https://1037fdf037b6.ngrok-free.app/api/ticketapi/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'API-KEY': 'ME1f40rs83RaVxmOVopx1WbRaHEElF'
+        },
+        body: JSON.stringify(ticketData)
+      });
+      if (!response.ok) {
+        throw new Error('Failed to submit ticket: ' + response.statusText);
+      }
+      const result = await response.json();
+      alert("Ticket submitted!");
+      f.reset();
+      hideTicketForm();
+    } catch (error) {
+      alert("Error: " + error.message);
+    }
+  };
+  const ticketCloseBtn = document.getElementById("ticketCloseBtn");
+const ticketFullscreenBtn = document.getElementById("ticketFullscreenBtn");
+
+ticketCloseBtn.onclick = () => {
+  hideTicketForm();
+};
+
+ticketFullscreenBtn.onclick = () => {
+  ticketFormContainer.classList.toggle("fullscreen-active");
+};
+
+  ticketBackBtn.onclick = function() {
+    hideTicketForm();
+  };
+
+</script>
+</body>
+</html>
